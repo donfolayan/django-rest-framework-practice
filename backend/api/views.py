@@ -1,13 +1,20 @@
 import json
 from django.http import JsonResponse
+from products.models import Product
+
 
 def api_home(request, *args, **kwargs):
-    body = request.body
-    print('body: ', body)
+    model_data = Product.objects.all().order_by("?").first()
     data = {}
-    try:
-        data = json.loads(body)
-        print('data: ', data)
-    except:
-        print('failed to parse JSON')
+    if model_data:
+        data = {
+            "id": model_data.id,
+            "title": model_data.title,
+            "content": model_data.content,
+            "price": model_data.price,
+        }
+    else:
+        data = {
+            "message": "No products found."
+        }
     return JsonResponse(data)
